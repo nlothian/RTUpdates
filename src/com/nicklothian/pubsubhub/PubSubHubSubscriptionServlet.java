@@ -161,6 +161,7 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 						nsfEntry.setBody(syndEntry.getTitle());
 					}
 					
+					
 					/*
 					Date date = syndEntry.getUpdatedDate();
 					if (date == null) {
@@ -171,7 +172,7 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 					}					
 					nsfEntry.setDate(date);
 					*/
-					nsfEntry.setDate(new Date());
+					nsfEntry.setDate(new Date()); // actually want the datetime this was shared, NOT when it appeared in the RSS feed. 
 					
 					
 					entriesToSave.add(nsfEntry);
