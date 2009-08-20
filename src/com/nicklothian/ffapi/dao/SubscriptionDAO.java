@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
+import javax.jdo.Transaction;
 
 import org.springframework.beans.factory.annotation.Required;
 
@@ -42,14 +43,29 @@ public class SubscriptionDAO {
 	}
 
 	public void delete(Subscription subscription) {
+		// I can't get JDO deletes to work not matter what I try.
+		// At least if I comment it out unsubscribes will work..
+		
+		/*
 		PersistenceManager pm = persistenceManagerAccess.getPersistenceManagerFactory().getPersistenceManager();
 		try {
-			System.out.println("Deleteing subscription to " + subscription.getSubscribedUrl());			
-			pm.deletePersistent(subscription);			
+			Transaction tx = pm.currentTransaction();
+			try {
+				tx.begin();			
+				Subscription s = (Subscription) pm.getObjectById(subscription.getId());			
+				System.out.println("Deleting subscription id " + s.getId() + " with url " + s.getSubscribedUrl());					
+				pm.deletePersistent(s);
+				tx.commit();
+				
+			} finally {
+				 if (tx.isActive()) {
+		                tx.rollback();
+		         }
+			}
 		} finally {
 			pm.close();
-		}		
-		
+		}
+		*/
 		
 	}	
 	
