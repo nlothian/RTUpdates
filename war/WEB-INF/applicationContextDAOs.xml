@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="propertyConfigurer" class="au.edu.educationau.opensource.spring20.EnvironmentPropertyConfigurer" ></bean>	
+	
+	<bean id="persistenceManagerAccess" class="com.nicklothian.ffapi.dao.PersistenceManagerAccess" ></bean>
+	
+	<bean id="naiveFeedStoreDAO" class="com.nicklothian.ffapi.dao.NaiveFeedStoreDAO" >
+		<property name="persistenceManagerAccess" ref="persistenceManagerAccess" />				
+	</bean>
+
+	<bean id="subscriptionDAO" class="com.nicklothian.ffapi.dao.SubscriptionDAO" >
+		<property name="persistenceManagerAccess" ref="persistenceManagerAccess" />				
+	</bean>
+
+</beans>

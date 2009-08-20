@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="propertyConfigurer" class="au.edu.educationau.opensource.spring20.EnvironmentPropertyConfigurer" ></bean>	
+	
+    <bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+    	<property name="order"><value>0</value></property>
+    </bean> 	
+	
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
+        <property name="prefix"><value>/WEB-INF/jsp/</value></property>
+        <property name="suffix"><value>.jsp</value></property>
+        <property name="order"><value>1</value></property>
+    </bean>
+
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/">renderController</prop>
+            </props>
+        </property>
+    </bean>
+
+       
+	<bean id="renderController" class="com.nicklothian.ffapi.web.RenderController">
+		<property name="feedStoreDAO" ref="naiveFeedStoreDAO" />
+		<property name="viewName" value="render" />
+	</bean>	
+	
+</beans>
+       

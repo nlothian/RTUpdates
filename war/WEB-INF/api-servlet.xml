@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="propertyConfigurer" class="au.edu.educationau.opensource.spring20.EnvironmentPropertyConfigurer" ></bean>	
+	
+    <bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+    	<property name="order"><value>0</value></property>
+    </bean> 
+
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="/showfeed">showFeedController</prop>
+				<prop key="/lastupdate">lastUpdatedController</prop>
+            </props>
+        </property>
+    </bean>
+
+       
+	<bean id="showFeedController" class="com.nicklothian.ffapi.web.ShowFeedController">
+		<property name="viewName" value="jsonFeedView"/>
+		<property name="feedStoreDAO" ref="naiveFeedStoreDAO" />
+	</bean>	
+
+	<bean id="lastUpdatedController" class="com.nicklothian.ffapi.web.LastUpdatedController">
+		<property name="viewName" value="jsonLatestUpdateView"/>
+		<property name="feedStoreDAO" ref="naiveFeedStoreDAO" />
+	</bean>	
+	
+		
+	<bean name="jsonFeedView" class="com.nicklothian.ffapi.web.JsonFeedView" />
+	
+	<bean name="jsonLatestUpdateView" class="com.nicklothian.ffapi.web.JsonLatestUpdateView" />
+	
+       
+</beans>
+       

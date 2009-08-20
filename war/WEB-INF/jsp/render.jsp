@@ -1,0 +1,336 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Tech Demo</title>
+    <style type="text/css">
+
+      body {
+        background: white;
+        color: black;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+      }
+
+      .page {
+        max-width: 925px;
+        padding: 25px;
+        margin: auto;
+        position: relative;
+      }
+
+      img {
+        border: 0;
+      }
+
+      a {
+        color: #00c;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .header h1 a {
+        color: black;
+        text-decoration: none;
+      }
+
+      .header .picture {
+        float: left;
+        line-height: 0;
+      }
+
+      .header .picture img {
+        width: 75px;
+        height: 75px;
+      }
+
+      .header .body {
+        margin-left: 85px;
+      }
+
+      .header,
+      .entry,
+      .share {
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 12px;
+      }
+
+      .entry .picture {
+        float: left;
+        line-height: 0;
+      }
+
+      .header .picture img,
+      .entry .picture img {
+        border: 1px solid silver;
+      }
+
+      .entry .picture img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .entry .body {
+        margin-left: 60px;
+      }
+
+      .entry .media {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        line-height: 0;
+      }
+
+      .entry .media img {
+        border: 1px solid silver;
+        padding: 2px;
+        margin-right: 8px;
+      }
+
+      .entry .author a {
+        font-weight: bold;
+      }
+
+      .entry .title,
+      .entry .info {
+        margin-top: 2px;
+      }
+
+      .entry .info,
+      .entry .likes,
+      .entry .comment {
+        color: #666;
+        font-size: 13px;
+      }
+
+      .entry .info a,
+      .entry .likes a,
+      .entry .comment a {
+        color: #77c;
+      }
+
+      .entry .info a.permalink,
+      .entry .info a.via {
+        color: #666;
+      }
+
+      .entry .likes,
+      .entry .comment {
+        padding-left: 20px;
+      }
+
+      .entry .likes {
+        margin-top: 7px;
+        background: url("http://friendfeed.com/static/images/n-smile.png") no-repeat top left;
+        line-height: 16px;
+      }
+
+      .entry .comment {
+        margin-top: 8px;
+        background: url("http://friendfeed.com/static/images/n-comment.png") no-repeat top left;
+      }
+
+      .entry .comment.placeholder {
+        background: none;
+      }
+
+      .entry a.expandcomments {
+        font-style: italic;
+      }
+
+      .clear {
+        clear: left;
+      }
+
+      .header,
+      .share,
+      .feed {
+         margin-right: 210px;
+      }
+
+      .menu {
+         float: right;
+         width: 155px;
+         border: 1px solid silver;
+         background: #eee;
+         padding: 8px;
+      }
+
+      .menu h3 {
+        font-size: 15px;
+        margin: 0;
+      }
+
+      .menu ul {
+         list-style-type: none;
+         margin: 0;
+         padding: 0;
+      }
+
+      .menu ul li {
+        margin-top: 2px;
+      }
+
+      .menu .section {
+        margin-bottom: 15px;
+      }
+      
+      #notification {
+      	display: none;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div style="border-bottom: 1px solid silver; background: #eee; padding: 5px; font-weight: bold; text-align: center">
+    This is a tech demo of a <a href="http://pubsubhubbub.appspot.com/">PubSubHub</a> powered, <a href="http://friendfeed.com">FriendFeed</a>-like service. 
+    The UI code is based on an application created by FriendFeed to demonstrate their API. You can <a href="http://code.google.com/p/friendfeed-api-example">download that source code</a> on Google Code.
+    </div>
+    <div class="page">
+      <div class="menu" id="notification">
+			There is new content available. Press <a href="javascript:window.location.reload();">here</a> to reload.
+      </div>
+ 
+
+      <div class="feed">
+        <c:forEach items="${entries}" var="entry" >
+         <div class="entry" eid="${entry.id}">
+          <!--  <div class="picture"><a href="/{{ entry.from.id }}"><img src="http://friendfeed-api.com/v2/picture/{{ entry.from.id }}?size=medium"/></a></div> -->
+          <div class="body">
+            <div class="author">
+              <span class="from">TODO: Authors are currently unimplemented</span>
+            </div>
+            <div class="title">${entry.body} - <a href="${entry.url}">${entry.url}</a></div>
+          </div>
+        </div>
+        <div class="clear"></div>
+        </c:forEach>
+      </div>
+    </div>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+		var pageBuilt = <%= new java.util.Date().getTime() %>;
+               
+		function pollForNewData() {
+			$.getJSON("/api/lastupdate", function(data) {
+				if (data.lastUpdate > pageBuilt) {
+					$('#notification').show("slow");
+				}
+			});
+		}
+               
+      $(document).ready(function() {
+		setInterval("pollForNewData()", 5000);
+        
+        jQuery.fn.formToDict = function() {
+          var fields = this.serializeArray();
+          var json = {}
+          for (var i = 0; i < fields.length; i++) {
+            json[fields[i].name] = fields[i].value;
+          }
+          return json;
+        };
+
+        jQuery.postJSON = function(url, data, callback) {
+            $.post(url, data, callback, "json");
+        };
+
+        function makeCommentDiv(comment) {
+          var commentDiv = $('<div class="comment"></div>');
+          commentDiv.append(comment.body);
+          if (comment.from) {
+	    var from = $('<a href="/' + comment.from.id + '"/>');
+	    from.text(comment.from.name);
+            commentDiv.append(' - ');
+	    commentDiv.append(from);
+          }
+          return commentDiv;
+        }
+
+        $(".commentcommand").live("click", function() {
+          var entry = $(this).parents(".entry");
+          var existing = entry.find(".comment.form");
+          if (existing.length > 0) {
+              existing.find("input[name=body]").focus();
+              return false;
+          }
+          var form = $('<div class="comment form"><form method="post"><input type="text" name="body" style="width:300px"/> <input type="submit" value="Comment"/></form></div>');
+          form.find("form").submit(function() {
+	    form.find("input[type=submit]").attr("disabled", "disabled");
+            var args = $.extend({entry: entry.attr("eid")},
+                form.find("form").formToDict());
+            $.postJSON("/a/comment", args, function(comment) {
+                form.remove();
+                entry.find(".body").append(makeCommentDiv(comment));
+            });
+            return false;
+          });
+          entry.find(".body").append(form);
+          form.find("input[name=body]").focus();
+          return false;
+        });
+
+        $(".likecommand").live("click", function() {
+          var link = $(this);
+          var entry = link.parents(".entry");
+          $.postJSON("/a/like", {entry: entry.attr("eid")}, function(like) {
+              link.removeClass("likecommand").addClass("unlikecommand").html("Unlike");
+          });
+          return false;
+        });
+
+        $(".unlikecommand").live("click", function() {
+          var link = $(this);
+          var entry = link.parents(".entry");
+          $.postJSON("/a/like/delete", {entry: entry.attr("eid")}, function(response) {
+              link.removeClass("unlikecommand").addClass("likecommand").html("like");
+          }); 
+          return false;
+        });
+
+        $(".hidecommand").live("click", function() {
+          var entry = $(this).parents(".entry");
+          $.postJSON("/a/hide", {entry: entry.attr("eid")}, function(response) {
+            entry.attr("oldhtml", entry.html());
+            entry.html('<span style="font-style: italic">Entry hidden</span> - <a href="#" class="unhidecommand">undo</a>.');
+          });
+        });
+
+        $(".unhidecommand").live("click", function() {
+          var entry = $(this).parents(".entry");
+          $.postJSON("/a/unhide", {entry: entry.attr("eid")}, function(response) {
+            entry.html(entry.attr("oldhtml"));
+          });
+        });
+
+        $(".expandcomments").live("click", function() {
+          var entry = $(this).parents(".entry");
+          var eid = $(this).parents(".entry").attr("eid");
+          $.getJSON("/a/entry/" + eid, function(data) {
+              entry.find(".comment").remove();
+              $.each(data.comments, function(i, comment) {
+                entry.find(".body").append(makeCommentDiv(comment));
+              });
+          });
+          return false;
+        });
+      });
+
+    //]]>
+    </script>
+  </body>
+</html>
