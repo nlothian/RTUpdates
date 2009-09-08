@@ -19,6 +19,9 @@ import com.nicklothian.ffapi.dao.NaiveFeedStoreDAO;
 import com.nicklothian.ffapi.dao.SubscriptionDAO;
 import com.nicklothian.ffapi.model.NaiveStoredFeedEntry;
 import com.nicklothian.ffapi.model.Subscription;
+import com.sun.syndication.feed.atom.Entry;
+import com.sun.syndication.feed.atom.Link;
+import com.sun.syndication.feed.atom.Person;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
@@ -139,7 +142,8 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 		if (EXPECTED_CONTENT_TYPE.equals(req.getContentType())) {
 			InputStream in = req.getInputStream();
 			
-			SyndFeedInput input = new SyndFeedInput(); 
+			SyndFeedInput input = new SyndFeedInput();
+			input.setPreserveWireFeed(true);
 			try {
 				SyndFeed feed = input.build(new XmlReader(in));
 				List<SyndEntry> entries = feed.getEntries();				
@@ -147,7 +151,7 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 				List<NaiveStoredFeedEntry> entriesToSave = new ArrayList<NaiveStoredFeedEntry>();
 				for (SyndEntry syndEntry : entries) {
 	
-					System.out.println("Found Link: " + syndEntry.getLink());
+					System.out.println("Found Link: " + syndEntry.getUri());
 					
 					NaiveStoredFeedEntry nsfEntry = new NaiveStoredFeedEntry();
 					nsfEntry.setUrl(syndEntry.getLink());
@@ -173,6 +177,30 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 					nsfEntry.setDate(date);
 					*/
 					nsfEntry.setDate(new Date()); // actually want the datetime this was shared, NOT when it appeared in the RSS feed. 
+					
+					
+					
+					Object obj = syndEntry.getWireEntry();
+					if (obj != null && obj instanceof Entry) {
+						Entry entry = (Entry) obj;
+						List<Person> authors = entry.getAuthors();
+						if (authors != null && authors.size() > 0) {
+							Person author = authors.get(0);
+							nsfEntry.setAuthor(author.getName());
+							nsfEntry.setAuthorUrl(author.getUrl());
+						}
+						
+						List<Link> links =  entry.getOtherLinks();						
+						if (links != null && links.size() > 0) {
+							if (links.get(0).getHrefResolved() != null && links.get(0).getHrefResolved().startsWith("http")) {
+								nsfEntry.setUrl(links.get(0).getHrefResolved());
+							} 
+							
+						}
+						
+					} else {
+						nsfEntry.setAuthor(syndEntry.getAuthor());
+					}
 					
 					
 					entriesToSave.add(nsfEntry);

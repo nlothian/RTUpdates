@@ -45,7 +45,6 @@ public class SubscriptionDAO {
 	public void delete(Subscription subscription) {
 		// I can't get JDO deletes to work not matter what I try.
 		// At least if I comment it out unsubscribes will work..
-		
 		/*
 		PersistenceManager pm = persistenceManagerAccess.getPersistenceManagerFactory().getPersistenceManager();
 		try {
@@ -66,7 +65,6 @@ public class SubscriptionDAO {
 			pm.close();
 		}
 		*/
-		
 	}	
 	
 	

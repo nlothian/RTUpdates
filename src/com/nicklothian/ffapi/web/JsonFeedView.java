@@ -58,9 +58,27 @@ public class JsonFeedView implements org.springframework.web.servlet.View {
 				writer.value(entry.getUrl());
 				writer.key("date");
 				writer.value(sdf.format(entry.getDate()));
+
+				FFFeed from = entry.getFrom();
+				if (from != null) {
+					writer.key("from");
+
+					writer.object();
+					
+					writer.key("id");
+					writer.value(from.getId());
+					writer.key("name");
+					writer.value(from.getName());
+					writer.key("type");
+					writer.value(from.getType().toString());					
+					
+					writer.endObject();
+				}
+
 				
 				writer.key("body");
 				writer.value(entry.getBody());
+				
 				writer.endObject();
 			}
 			writer.endArray();

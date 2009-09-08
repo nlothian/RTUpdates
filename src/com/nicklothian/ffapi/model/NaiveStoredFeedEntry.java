@@ -23,7 +23,14 @@ public class NaiveStoredFeedEntry {
 	
 	@Persistent
 	private Date date;
+	
+	@Persistent
+	private String author;
 
+	@Persistent
+	private String authorUrl;
+	
+	
 	public Long getId() {
 		return id;
 	}
@@ -55,5 +62,22 @@ public class NaiveStoredFeedEntry {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public void setAuthorUrl(String authorUrl) {
+		this.authorUrl = authorUrl;
+	}
+
+	public String getAuthorUrl() {
+		return authorUrl;
+	}
+
 
 }

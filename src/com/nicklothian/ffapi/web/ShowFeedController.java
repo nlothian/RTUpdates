@@ -43,6 +43,9 @@ public class ShowFeedController extends ParameterizableViewController {
 	}
 
 	private FFFeed findFeed(String feedId) throws NotFoundException {
+		
+		System.out.println(feedId);
+		
 		FFFeed feed = new FFFeed();
 		feed.setId("test");
 		feed.setName("Test Feed");
@@ -58,6 +61,17 @@ public class ShowFeedController extends ParameterizableViewController {
 			entry.setDate(naiveStoredFeedEntry.getDate());
 			entry.setUrl(naiveStoredFeedEntry.getUrl());
 			entry.setBody(naiveStoredFeedEntry.getBody());
+			
+			if (naiveStoredFeedEntry.getAuthor() != null) {
+				FFFeed from = new FFFeed();
+				from.setType(FFFeedType.USER);
+				from.setName(naiveStoredFeedEntry.getAuthor());
+				if (naiveStoredFeedEntry.getAuthorUrl() != null) {
+					from.setId(naiveStoredFeedEntry.getAuthorUrl());
+				}
+				entry.setFrom(from);
+			}
+			
 			
 			feedEntries.add(entry);
 		}

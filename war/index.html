@@ -233,8 +233,20 @@
 				for (i = 0; i < entries.length; i++) {
 					$('#feed').append("<div class='entry' eid='" + entries[i].id + "' >");
 					$('#feed').append("<div class='body'>");
-					$('#feed').append("<div class='author'><span class='from'>TODO: Authors are currently unimplemented</span></div>");
-					$('#feed').append("<div class='title'>" + entries[i].body + " - <a href='" + entries[i].url + "'>" + entries[i].url.substring(0, 40) + "..." + "</a></div>");
+					if (entries[i].from != null) {
+						$('#feed').append("<div class='author'><span class='from'>");
+						if (entries[i].from.id != null) {							
+							$('#feed').append("<a href='" + entries[i].from.id + "'>" + entries[i].from.name + "</a>");
+						} else {		
+							$('#feed').append(entries[i].from.name);
+						}
+						$('#feed').append("</span></div>");
+					}	
+					if (entries[i].url != null && entries[i].url.match(/^http/)) {
+						$('#feed').append("<div class='title'>" + entries[i].body + "<br /><a href='" + entries[i].url + "'>" + entries[i].url.substring(0, 40) + "..." + "</a></div>");
+					} else {
+						$('#feed').append("<div class='title'>" + entries[i].body + "</div>");
+					}
 					$('#feed').append("</div>");
 					$('#feed').append("</div>");
 					$('#feed').append("<div class='clear'></div>");	
