@@ -22,8 +22,6 @@ public class NaiveFeedStoreDAO {
 	public void save(List<NaiveStoredFeedEntry> naiveStoredFeedEntries) {
 		PersistenceManager pm = persistenceManagerAccess.getPersistenceManagerFactory().getPersistenceManager();
 		try {
-			System.out.println("Persisting " + naiveStoredFeedEntries.size() + " entries");
-			System.out.println("Entries are: " + naiveStoredFeedEntries);
 			pm.makePersistentAll(naiveStoredFeedEntries);			
 		} finally {
 			pm.close();
@@ -58,6 +56,25 @@ public class NaiveFeedStoreDAO {
 		
 	}
 	
+	public NaiveStoredFeedEntry getByAtomId(String atomId) {
+		PersistenceManager pm = persistenceManagerAccess.getPersistenceManagerFactory().getPersistenceManager();
+		try {
+			Query query = pm.newQuery(NaiveStoredFeedEntry.class);
+			query.setFilter("atomId == atomIdParam");
+			query.declareParameters("String atomIdParam");
+			query.setRange(0, 1);
+			List<NaiveStoredFeedEntry> results = (List<NaiveStoredFeedEntry>) query.execute(atomId);
+			if (results.size() > 0) {
+				return results.get(0);				
+			} else {
+				return null;
+			}
+			
+		} finally {
+			pm.close();
+		}
+
+	}
 	
 	public List<NaiveStoredFeedEntry> getAll() {
 		PersistenceManager pm = persistenceManagerAccess.getPersistenceManagerFactory().getPersistenceManager();

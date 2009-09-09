@@ -30,7 +30,9 @@ public class NaiveStoredFeedEntry {
 	@Persistent
 	private String authorUrl;
 	
-	
+	@Persistent
+	private String atomId;
+
 	public Long getId() {
 		return id;
 	}
@@ -77,6 +79,14 @@ public class NaiveStoredFeedEntry {
 
 	public String getAuthorUrl() {
 		return authorUrl;
+	}
+
+	public String getAtomId() {
+		return atomId;
+	}
+
+	public void setAtomId(String atomId) {
+		this.atomId = atomId;
 	}
 
 

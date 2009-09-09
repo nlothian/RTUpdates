@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,8 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 	public final String EXPECTED_CONTENT_TYPE = "application/atom+xml";
 	
 	public final String HARD_CODED_TOKEN = "token123";
+	
+	NaiveFeedStoreDAO feedStoreDAO = null;
 	
 	
 	private static final Logger log = Logger.getLogger(PubSubHubSubscriptionServlet.class.getName());
@@ -139,6 +142,12 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		if (feedStoreDAO == null) {
+			// find the bean in Spring
+			ApplicationContext context = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());				
+			feedStoreDAO = (NaiveFeedStoreDAO) context.getBean("naiveFeedStoreDAO");
+		}					
+		
 		if (EXPECTED_CONTENT_TYPE.equals(req.getContentType())) {
 			InputStream in = req.getInputStream();
 			
@@ -152,37 +161,24 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 				for (SyndEntry syndEntry : entries) {
 	
 					System.out.println("Found Link: " + syndEntry.getUri());
-					
-					NaiveStoredFeedEntry nsfEntry = new NaiveStoredFeedEntry();
-					nsfEntry.setUrl(syndEntry.getLink());
-					if (syndEntry.getDescription() != null) {
-						String body = syndEntry.getDescription().getValue();
-						if (body != null && body.length() >=500) {
-							body = body.substring(0, 490) + "...";
-						}
-						nsfEntry.setBody(body);
-					} else {
-						nsfEntry.setBody(syndEntry.getTitle());
-					}
-					
-					
-					/*
-					Date date = syndEntry.getUpdatedDate();
-					if (date == null) {
-						date = syndEntry.getPublishedDate();
-						if (date == null) {
-							date = new Date();
-						}
-					}					
-					nsfEntry.setDate(date);
-					*/
-					nsfEntry.setDate(new Date()); // actually want the datetime this was shared, NOT when it appeared in the RSS feed. 
-					
+
+					NaiveStoredFeedEntry nsfEntry = null;
 					
 					
 					Object obj = syndEntry.getWireEntry();
 					if (obj != null && obj instanceof Entry) {
 						Entry entry = (Entry) obj;
+						
+						String atomId = entry.getId();
+						
+						nsfEntry = feedStoreDAO.getByAtomId(atomId); // look for an existing entry to update
+						if (nsfEntry == null) {
+							// no existing update found, create a new one
+							nsfEntry = new NaiveStoredFeedEntry();
+							nsfEntry.setAtomId(atomId);
+						}
+						
+						
 						List<Person> authors = entry.getAuthors();
 						if (authors != null && authors.size() > 0) {
 							Person author = authors.get(0);
@@ -196,19 +192,34 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 								nsfEntry.setUrl(links.get(0).getHrefResolved());
 							} 
 							
+						} else {
+							nsfEntry.setUrl(syndEntry.getLink());
 						}
 						
 					} else {
+						nsfEntry = new NaiveStoredFeedEntry();
+						nsfEntry.setUrl(syndEntry.getLink());
 						nsfEntry.setAuthor(syndEntry.getAuthor());
+					}					
+					
+										
+					
+					if (syndEntry.getDescription() != null) {
+						String body = syndEntry.getDescription().getValue();
+						if (body != null && body.length() >=500) {
+							body = body.substring(0, 490) + "...";
+						}
+						nsfEntry.setBody(body);
+					} else {
+						nsfEntry.setBody(syndEntry.getTitle());
 					}
+					
+					nsfEntry.setDate(new Date()); // actually want the datetime this was shared, NOT when it appeared in the RSS feed. 
 					
 					
 					entriesToSave.add(nsfEntry);
 				}
 				
-				// find the bean in Spring
-				ApplicationContext context = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());				
-				NaiveFeedStoreDAO feedStoreDAO = (NaiveFeedStoreDAO) context.getBean("naiveFeedStoreDAO");
 								
 				feedStoreDAO.save(entriesToSave);
 				
@@ -232,6 +243,7 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 			return;
 		}
 	}
+
 
 
 }
