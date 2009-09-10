@@ -44,8 +44,6 @@ public class ShowFeedController extends ParameterizableViewController {
 
 	private FFFeed findFeed(String feedId) throws NotFoundException {
 		
-		System.out.println(feedId);
-		
 		FFFeed feed = new FFFeed();
 		feed.setId("test");
 		feed.setName("Test Feed");

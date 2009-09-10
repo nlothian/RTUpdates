@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -83,7 +82,7 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 					Subscription subscription = subscriptionDAO.find(hubTopic);
 					if (subscription != null) {
 						log.info("Subscription attempted but already exists for " + hubTopic);
-						resp.sendError(404, "That subscription already exists");
+						resp.sendError(204, "That subscription already exists");
 					} else {					
 						// ok, we'll accept it
 						log.info("accepting subscription to " + hubTopic + ". Subscription will expire in " + hubLeaseSeconds + " seconds");
@@ -140,6 +139,8 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 		
 	}
 
+	
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if (feedStoreDAO == null) {
@@ -155,7 +156,7 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 			input.setPreserveWireFeed(true);
 			try {
 				SyndFeed feed = input.build(new XmlReader(in));
-				List<SyndEntry> entries = feed.getEntries();				
+				@SuppressWarnings("unchecked") List<SyndEntry> entries = feed.getEntries();				
 
 				List<NaiveStoredFeedEntry> entriesToSave = new ArrayList<NaiveStoredFeedEntry>();
 				for (SyndEntry syndEntry : entries) {
@@ -179,14 +180,14 @@ public class PubSubHubSubscriptionServlet extends HttpServlet {
 						}
 						
 						
-						List<Person> authors = entry.getAuthors();
+						@SuppressWarnings("unchecked") List<Person> authors = entry.getAuthors();
 						if (authors != null && authors.size() > 0) {
 							Person author = authors.get(0);
 							nsfEntry.setAuthor(author.getName());
 							nsfEntry.setAuthorUrl(author.getUrl());
 						}
 						
-						List<Link> links =  entry.getOtherLinks();						
+						@SuppressWarnings("unchecked") List<Link> links =  entry.getOtherLinks();						
 						if (links != null && links.size() > 0) {
 							if (links.get(0).getHrefResolved() != null && links.get(0).getHrefResolved().startsWith("http")) {
 								nsfEntry.setUrl(links.get(0).getHrefResolved());

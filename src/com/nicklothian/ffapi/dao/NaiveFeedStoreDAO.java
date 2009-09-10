@@ -56,6 +56,7 @@ public class NaiveFeedStoreDAO {
 		
 	}
 	
+	
 	public NaiveStoredFeedEntry getByAtomId(String atomId) {
 		PersistenceManager pm = persistenceManagerAccess.getPersistenceManagerFactory().getPersistenceManager();
 		try {
@@ -63,7 +64,7 @@ public class NaiveFeedStoreDAO {
 			query.setFilter("atomId == atomIdParam");
 			query.declareParameters("String atomIdParam");
 			query.setRange(0, 1);
-			List<NaiveStoredFeedEntry> results = (List<NaiveStoredFeedEntry>) query.execute(atomId);
+			@SuppressWarnings("unchecked")	List<NaiveStoredFeedEntry> results = (List<NaiveStoredFeedEntry>) query.execute(atomId);
 			if (results.size() > 0) {
 				return results.get(0);				
 			} else {
@@ -82,7 +83,7 @@ public class NaiveFeedStoreDAO {
 			Query query = pm.newQuery(NaiveStoredFeedEntry.class);
 			query.setOrdering("date desc");
 			query.setRange(0, 25);
-			List<NaiveStoredFeedEntry> results = (List<NaiveStoredFeedEntry>) query.execute();
+			@SuppressWarnings("unchecked")	List<NaiveStoredFeedEntry> results = (List<NaiveStoredFeedEntry>) query.execute();
 			results.size();
 			return results;
 		} finally {
